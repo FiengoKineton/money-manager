@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Money Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <h1>Money Manager</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Dashboard</a>
+      <a href="{{ url_for('add_transaction', type='expense') }}">+ Expense</a>
+      <a href="{{ url_for('add_transaction', type='income') }}">+ Income</a>
+      <a href="{{ url_for('add_transaction', type='investment') }}">+ Investment</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+  // Select all types + all categories in the filters
+  function selectAllFilters() {
+    const boxes = document.querySelectorAll('.type-checkbox');
+    boxes.forEach(b => b.checked = true);
+
+    const select = document.getElementById('category-select');
+    if (select) {
+      for (const opt of select.options) {
+        opt.selected = true;
+      }
+    }
+  }
+  </script>
+</body>
+</html>

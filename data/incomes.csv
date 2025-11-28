@@ -1,0 +1,9 @@
+id,date,category,sub_category,amount,account,description,created_at
+1,2025-10-08,PoliMi,,1096.22,,First half-payement,
+2,2025-10-13,Other income,,871.83,,Kineton,
+3,2025-11-10,Cash,,100.00,,Recupero Prelievi Riccardo (Deddo),
+4,2025-11-19,PoliMi,,2282.40,,First Full payement,
+5,2025-11-21,Deddo,,400.00,,Reimborso Visite Mediche,
+6,2025-11-22,Other income,,50.00,,Quota altri regalo Tommaso,
+7,2025-11-27,PoliMi,,1638.34,,,
+8,2025-10-01,Other income,,1100.22,,Initial Net,

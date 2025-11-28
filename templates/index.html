@@ -1,0 +1,146 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<section class="filters">
+  <form method="get" action="{{ url_for('index') }}" class="filters-form">
+
+    <!-- LEFT: Date -->
+    <div class="filter-date">
+      <label class="block-label">Date</label>
+      <div class="date-inputs">
+        <div>
+          <span class="small-label">From</span>
+          <input type="date" name="from" value="{{ start }}">
+        </div>
+        <div>
+          <span class="small-label">To</span>
+          <input type="date" name="to" value="{{ end }}">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Types, Category, Search + buttons -->
+    <div class="filter-main">
+      <div class="filter-row">
+        <!-- Types -->
+        <div class="filter-field">
+          <label>Types</label>
+          <div class="types-group">
+            {% for t in all_types %}
+              <label class="checkbox-inline">
+                <input type="checkbox"
+                       class="type-checkbox"
+                       name="types"
+                       value="{{ t }}"
+                       {% if t in active_types %}checked{% endif %}>
+                {{ t.capitalize() }}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="filter-field">
+          <label>Category</label>
+          <select name="category" id="category-select" multiple size="4">
+            {% for c in categories_all %}
+              <option value="{{ c }}" {% if c in categories_selected %}selected{% endif %}>
+                {{ c }}
+              </option>
+            {% endfor %}
+          </select>
+          <p class="hint">Hold Ctrl (Cmd) to select multiple.</p>
+        </div>
+
+        <!-- Search -->
+        <div class="filter-field">
+          <label>Search</label>
+          <input type="text" name="q" value="{{ q }}" placeholder="Description or category">
+        </div>
+      </div>
+
+      <div class="filters-actions">
+        <button type="submit" class="primary-btn">Apply</button>
+        <button type="button" class="secondary-btn" onclick="selectAllFilters()">All</button>
+      </div>
+    </div>
+
+  </form>
+</section>
+
+
+<section class="summary">
+  <div class="summary-card income">
+    <h3>Income</h3>
+    <p>{{ '%.2f'|format(totals.income) }}</p>
+  </div>
+  <div class="summary-card expense">
+    <h3>Expenses</h3>
+    <p>{{ '%.2f'|format(totals.expenses) }}</p>
+  </div>
+  <div class="summary-card investment">
+    <h3>Investments (cash out)</h3>
+    <p>{{ '%.2f'|format(totals.investments) }}</p>
+  </div>
+  <div class="summary-card net">
+    <h3>Net</h3>
+    <p>{{ '%.2f'|format(totals.net) }}</p>
+    <small>Savings rate: {{ '%.1f'|format(totals.savings_rate) }} %</small>
+  </div>
+</section>
+
+<section class="plots">
+  <div class="plot">
+    <img src="{{ url_for('static', filename='plots/monthly_summary.png') }}" alt="Monthly summary">
+  </div>
+  <div class="plot">
+    <img src="{{ url_for('static', filename='plots/expenses_by_category.png') }}" alt="Expenses by category">
+  </div>
+  <div class="plot">
+    <img src="{{ url_for('static', filename='plots/cumulative_balance.png') }}" alt="Cumulative balance">
+  </div>
+</section>
+
+<section class="transactions">
+  <h2>Transactions</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Account</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tx in transactions %}
+        {% set row_class = '' %}
+        {% if tx.type == 'expense' %}
+          {% set row_class = 'row-expense' %}
+        {% elif tx.type == 'income' %}
+          {% set row_class = 'row-income' %}
+        {% elif tx.type == 'investment' %}
+          {% set row_class = 'row-investment' %}
+        {% endif %}
+        <tr class="{{ row_class }}">
+          <td>{{ tx.date_str }}</td>
+          <td>{{ tx.type.capitalize() }}</td>
+          <td>
+            {{ tx.category }}
+            {% if tx.sub_category %}<br><small>{{ tx.sub_category }}</small>{% endif %}
+          </td>
+          <td>{{ tx.description }}</td>
+          <td>{{ tx.account }}</td>
+          <td>{{ tx.amount_str }}</td>
+        </tr>
+      {% endfor %}
+      {% if transactions|length == 0 %}
+        <tr><td colspan="6" class="empty">No transactions in this range.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
