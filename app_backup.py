@@ -169,13 +169,15 @@ def get_transaction(ttype: str, tx_id: int) -> Dict[str, Any] | None:
 # ---------------------------------------------------------------------
 # Routes: simple dashboard, add, detail
 # ---------------------------------------------------------------------
-@app.route("/")
+@app.route("/", endpoint="index")
+@app.route("/simple", endpoint="simple_index")
 def simple_index():
     transactions = load_all_simple()
     return render_template("simple_index.html", transactions=transactions)
 
 
-@app.route("/add", methods=["GET", "POST"])
+@app.route("/add", methods=["GET", "POST"], endpoint="add_transaction")
+@app.route("/simple/add", methods=["GET", "POST"], endpoint="simple_add_transaction")
 def simple_add_transaction():
     if request.method == "POST":
         ttype = request.form.get("type", "expense")
@@ -204,7 +206,7 @@ def simple_add_transaction():
             "description": description,
         }
         append_transaction_simple(tx)
-        return redirect(url_for("simple_index"))
+        return redirect(url_for("index"))  # back to simple_index/index
 
     # GET
     ttype = request.args.get("type", "expense")
@@ -213,6 +215,7 @@ def simple_add_transaction():
 
     today = datetime.today().date().isoformat()
     return render_template("simple_add_transaction.html", ttype=ttype, today=today)
+
 
 
 @app.route("/tx/<string:ttype>/<int:tx_id>")
