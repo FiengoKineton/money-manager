@@ -22,18 +22,30 @@
   </main>
 
   <script>
-  // Select all types + all categories in the filters
-  function selectAllFilters() {
-    const boxes = document.querySelectorAll('.type-checkbox');
-    boxes.forEach(b => b.checked = true);
+    function selectAllFilters() {
+      const boxes = document.querySelectorAll('.type-checkbox');
+      boxes.forEach(b => b.checked = true);
 
-    const select = document.getElementById('category-select');
-    if (select) {
-      for (const opt of select.options) {
-        opt.selected = true;
+      const select = document.getElementById('category-select');
+      if (select) {
+        for (const opt of select.options) {
+          opt.selected = true;
+        }
       }
     }
-  }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const rows = document.querySelectorAll('.clickable-row');
+      rows.forEach(row => {
+        row.addEventListener('click', () => {
+          const href = row.getAttribute('data-href');
+          if (href) {
+            window.location.href = href;
+          }
+        });
+      });
+    });
   </script>
+
 </body>
 </html>

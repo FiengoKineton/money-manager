@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="form-section">
+  <h2>Transaction #{{ tx.id }}</h2>
+  <p class="tx-meta">
+    <strong>Type:</strong> {{ tx.type|capitalize }}
+  </p>
+
+  <dl>
+    <dt>Date</dt>
+    <dd>{{ tx.date }}</dd>
+
+    <dt>Category</dt>
+    <dd>{{ tx.category }}</dd>
+
+    <dt>Sub-category</dt>
+    <dd>{{ tx.sub_category }}</dd>
+
+    <dt>Amount</dt>
+    <dd>{{ tx.amount_str }}</dd>
+
+    <dt>Account</dt>
+    <dd>{{ tx.account }}</dd>
+
+    <dt>Description</dt>
+    <dd>{{ tx.description }}</dd>
+  </dl>
+
+  <p style="margin-top:1rem;">
+    <a href="{{ url_for('simple_index') }}">Back to list</a>
+  </p>
+</section>
+{% endblock %}

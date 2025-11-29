@@ -116,31 +116,33 @@
       </tr>
     </thead>
     <tbody>
-      {% for tx in transactions %}
-        {% set row_class = '' %}
-        {% if tx.type == 'expense' %}
-          {% set row_class = 'row-expense' %}
-        {% elif tx.type == 'income' %}
-          {% set row_class = 'row-income' %}
-        {% elif tx.type == 'investment' %}
-          {% set row_class = 'row-investment' %}
-        {% endif %}
-        <tr class="{{ row_class }}">
-          <td>{{ tx.date_str }}</td>
-          <td>{{ tx.type.capitalize() }}</td>
-          <td>
-            {{ tx.category }}
-            {% if tx.sub_category %}<br><small>{{ tx.sub_category }}</small>{% endif %}
-          </td>
-          <td>{{ tx.description }}</td>
-          <td>{{ tx.account }}</td>
-          <td>{{ tx.amount_str }}</td>
-        </tr>
-      {% endfor %}
-      {% if transactions|length == 0 %}
-        <tr><td colspan="6" class="empty">No transactions in this range.</td></tr>
-      {% endif %}
+    {% for tx in transactions %}
+    <tr class="row-{{ tx.type }} clickable-row"
+        data-href="{{ url_for('transaction_detail', row_index=tx.row_index) }}">
+
+        <td>{{ tx.date_str }}</td>
+        <td>{{ tx.type.capitalize() }}</td>
+        <td>
+          {{ tx.category }}
+          {% if tx.sub_category and tx.sub_category != 'nan' %}
+            <br><small>{{ tx.sub_category }}</small>
+          {% endif %}
+        </td>
+        <td>
+          {% if tx.description and tx.description != 'nan' %}
+            {{ tx.description }}
+          {% endif %}
+        </td>
+        <td>
+          {% if tx.account and tx.account != 'nan' %}
+            {{ tx.account }}
+          {% endif %}
+        </td>
+        <td>{{ tx.amount_str }}</td>
+      </tr>
+    {% endfor %}
     </tbody>
+
   </table>
 </section>
 {% endblock %}

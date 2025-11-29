@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="form-section">
+  <h2>Transaction #{{ tx.id }}</h2>
+  <p class="tx-meta">
+    <strong>Type:</strong> {{ tx.type|capitalize }}
+  </p>
+
+  <form method="post" class="transaction-form">
+    <input type="hidden" name="action" value="update">
+
+    <div>
+      <label>Date</label>
+      <input type="date" name="date" value="{{ tx.date }}">
+    </div>
+
+    <div>
+      <label>Category</label>
+      <select name="category">
+        {% for c in categories %}
+          <option value="{{ c }}" {% if c == tx.category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label>Sub-category</label>
+      <input type="text" name="sub_category" value="{{ tx.sub_category }}">
+    </div>
+
+    <div>
+      <label>Amount</label>
+      <input type="number" step="0.01" name="amount" value="{{ tx.amount }}">
+    </div>
+
+    <div>
+      <label>Account</label>
+      <input type="text" name="account" value="{{ tx.account }}">
+    </div>
+
+    <div>
+      <label>Description</label>
+      <textarea name="description" rows="2">{{ tx.description }}</textarea>
+    </div>
+
+    <div>
+      <button type="submit">Save changes</button>
+    </div>
+  </form>
+
+  <form method="post" class="delete-form"
+        onsubmit="return confirm('Delete this transaction permanently?');">
+    <input type="hidden" name="action" value="delete">
+    <button type="submit" class="danger-btn">Delete</button>
+  </form>
+</section>
+{% endblock %}

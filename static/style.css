@@ -328,3 +328,36 @@ body {
 .transaction-form button:hover {
   background: #444;
 }
+
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: #f8f8fb;
+}
+
+.tx-meta {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.75rem 0;
+}
+
+.delete-form {
+  margin-top: 0.5rem;
+}
+
+.danger-btn {
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: none;
+  background: #b00020;
+  color: #fff;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: #880015;
+}

@@ -143,3 +143,53 @@ def append_transaction(tx: Dict) -> None:
     with path.open("a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=cols)
         writer.writerow(row)
+
+
+def _csv_path_for_type(ttype: str) -> Path:
+    if ttype == "expense":
+        return EXPENSES_CSV
+    elif ttype == "income":
+        return INCOMES_CSV
+    elif ttype == "investment":
+        return INVESTMENTS_CSV
+    else:
+        raise ValueError(f"Unknown type: {ttype}")
+
+def update_transaction_record(tx_id: int, ttype: str, data: dict) -> bool:
+    """Update a single transaction in the underlying CSV."""
+    path = _csv_path_for_type(ttype)
+    if not path.exists():
+        return False
+
+    df = pd.read_csv(path)
+    if "id" not in df.columns:
+        return False
+
+    mask = df["id"] == tx_id
+    if not mask.any():
+        return False
+
+    for col in ["date", "category", "sub_category", "amount", "account", "description"]:
+        if col in data:
+            df.loc[mask, col] = data[col]
+
+    df.to_csv(path, index=False)
+    return True
+
+def delete_transaction_record(tx_id: int, ttype: str) -> bool:
+    """Delete a single transaction from the underlying CSV."""
+    path = _csv_path_for_type(ttype)
+    if not path.exists():
+        return False
+
+    df = pd.read_csv(path)
+    if "id" not in df.columns:
+        return False
+
+    before = len(df)
+    df = df[df["id"] != tx_id]
+    if len(df) == before:
+        return False
+
+    df.to_csv(path, index=False)
+    return True
