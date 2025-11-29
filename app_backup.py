@@ -166,6 +166,96 @@ def get_transaction(ttype: str, tx_id: int) -> Dict[str, Any] | None:
     return None
 
 
+def update_transaction_simple(ttype: str, tx_id: int, data: Dict[str, Any]) -> None:
+    mapping = {
+        "expense": EXPENSES_CSV,
+        "income": INCOMES_CSV,
+        "investment": INVESTMENTS_CSV,
+    }
+    path = mapping[ttype]
+    if not path.exists():
+        return
+
+    fieldnames = [
+        "id",
+        "date",
+        "category",
+        "sub_category",
+        "amount",
+        "account",
+        "description",
+        "created_at",
+    ]
+
+    rows: List[Dict[str, Any]] = []
+    with path.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for raw in reader:
+            row = dict(raw)
+            try:
+                rid = int(row.get("id", "") or 0)
+            except Exception:
+                rid = 0
+
+            if rid == tx_id:
+                # overwrite this row with new data
+                row["date"] = data.get("date", row.get("date", ""))
+                row["category"] = data.get("category", row.get("category", ""))
+                row["sub_category"] = data.get("sub_category", row.get("sub_category", ""))
+                row["amount"] = str(data.get("amount", row.get("amount", "0")))
+                row["account"] = data.get("account", row.get("account", ""))
+                row["description"] = data.get("description", row.get("description", ""))
+                # keep created_at as is
+            rows.append(row)
+
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def delete_transaction_simple(ttype: str, tx_id: int) -> None:
+    mapping = {
+        "expense": EXPENSES_CSV,
+        "income": INCOMES_CSV,
+        "investment": INVESTMENTS_CSV,
+    }
+    path = mapping[ttype]
+    if not path.exists():
+        return
+
+    fieldnames = [
+        "id",
+        "date",
+        "category",
+        "sub_category",
+        "amount",
+        "account",
+        "description",
+        "created_at",
+    ]
+
+    rows: List[Dict[str, Any]] = []
+    with path.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for raw in reader:
+            row = dict(raw)
+            try:
+                rid = int(row.get("id", "") or 0)
+            except Exception:
+                rid = 0
+
+            if rid == tx_id:
+                # skip: this deletes it
+                continue
+            rows.append(row)
+
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 # ---------------------------------------------------------------------
 # Routes: simple dashboard, add, detail
 # ---------------------------------------------------------------------
@@ -218,16 +308,70 @@ def simple_add_transaction():
 
 
 
-@app.route("/tx/<string:ttype>/<int:tx_id>")
+@app.route("/tx/<string:ttype>/<int:tx_id>", methods=["GET", "POST"])
 def simple_transaction_detail(ttype: str, tx_id: int):
     if ttype not in ("expense", "income", "investment"):
         return "Invalid type", 400
 
+    if request.method == "POST":
+        action = request.form.get("action")
+
+        if action == "delete":
+            delete_transaction_simple(ttype, tx_id)
+            return redirect(url_for("index"))
+
+        if action == "update":
+            date_str = request.form.get("date") or ""
+            category = request.form.get("category", "")
+            sub_category = request.form.get("sub_category", "")
+            amount_str = request.form.get("amount", "0").replace(",", ".")
+            account = request.form.get("account", "")
+            description = request.form.get("description", "")
+
+            try:
+                amount = float(amount_str)
+            except Exception:
+                amount = 0.0
+
+            data = {
+                "date": date_str,
+                "category": category,
+                "sub_category": sub_category,
+                "amount": amount,
+                "account": account,
+                "description": description,
+            }
+            update_transaction_simple(ttype, tx_id, data)
+            return redirect(url_for("simple_transaction_detail", ttype=ttype, tx_id=tx_id))
+
+    # GET or after redirect
     tx = get_transaction(ttype, tx_id)
     if tx is None:
         return f"Transaction {tx_id} not found", 404
 
-    return render_template("simple_detail.html", tx=tx)
+    # normalize for template
+    tx_date = tx.get("date", "")
+    tx_amount = tx.get("amount_str", "0.00")
+    tx_category = tx.get("category", "")
+    tx_subcat = tx.get("sub_category", "")
+    tx_account = tx.get("account", "")
+    tx_desc = tx.get("description", "")
+
+    tx_view = {
+        "id": int(tx.get("id", 0) or 0),
+        "type": ttype,
+        "date": tx_date,
+        "category": tx_category,
+        "sub_category": tx_subcat,
+        "amount": tx_amount,
+        "account": tx_account,
+        "description": tx_desc,
+    }
+
+    return render_template("simple_detail.html", tx=tx_view)
 
 
-# no __main__ here; app.py is the launcher
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

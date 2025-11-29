@@ -2,14 +2,9 @@
 
 {% block content %}
 <section class="form-section">
-  <h2>Transaction #{{ tx.id }}</h2>
-  <p class="tx-meta">
-    <strong>Type:</strong> {{ tx.type|capitalize }}
-  </p>
+  <h2>Transaction #{{ tx.id }} ({{ tx.type|capitalize }})</h2>
 
   <form method="post" class="transaction-form">
-    <input type="hidden" name="action" value="update">
-
     <div>
       <label>Date</label>
       <input type="date" name="date" value="{{ tx.date }}">
@@ -18,8 +13,10 @@
     <div>
       <label>Category</label>
       <select name="category">
-        {% for c in categories %}
-          <option value="{{ c }}" {% if c == tx.category %}selected{% endif %}>{{ c }}</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if cat == tx.category %}selected{% endif %}>
+            {{ cat }}
+          </option>
         {% endfor %}
       </select>
     </div>
@@ -39,20 +36,26 @@
       <input type="text" name="account" value="{{ tx.account }}">
     </div>
 
-    <div>
+    <div style="grid-column: 1 / -1;">
       <label>Description</label>
       <textarea name="description" rows="2">{{ tx.description }}</textarea>
     </div>
 
-    <div>
-      <button type="submit">Save changes</button>
-    </div>
-  </form>
+    <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+      <button type="submit" name="action" value="update">
+        Save changes
+      </button>
 
-  <form method="post" class="delete-form"
-        onsubmit="return confirm('Delete this transaction permanently?');">
-    <input type="hidden" name="action" value="delete">
-    <button type="submit" class="danger-btn">Delete</button>
+      <button type="submit" name="action" value="delete"
+              style="background:#b00020; color:#fff;">
+        Delete
+      </button>
+
+      <a href="{{ url_for('index') }}"
+         style="align-self:center; margin-left:auto; text-decoration:none;">
+        Back to list
+      </a>
+    </div>
   </form>
 </section>
 {% endblock %}

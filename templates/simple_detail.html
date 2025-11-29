@@ -2,33 +2,49 @@
 
 {% block content %}
 <section class="form-section">
-  <h2>Transaction #{{ tx.id }}</h2>
-  <p class="tx-meta">
-    <strong>Type:</strong> {{ tx.type|capitalize }}
-  </p>
+  <h2>Transaction #{{ tx.id }} ({{ tx.type|capitalize }})</h2>
 
-  <dl>
-    <dt>Date</dt>
-    <dd>{{ tx.date }}</dd>
+  <form method="post" class="transaction-form">
+    <div>
+      <label>Date</label>
+      <input type="date" name="date" value="{{ tx.date }}">
+    </div>
 
-    <dt>Category</dt>
-    <dd>{{ tx.category }}</dd>
+    <div>
+      <label>Category</label>
+      <input type="text" name="category" value="{{ tx.category }}">
+    </div>
 
-    <dt>Sub-category</dt>
-    <dd>{{ tx.sub_category }}</dd>
+    <div>
+      <label>Sub-category</label>
+      <input type="text" name="sub_category" value="{{ tx.sub_category }}">
+    </div>
 
-    <dt>Amount</dt>
-    <dd>{{ tx.amount_str }}</dd>
+    <div>
+      <label>Amount</label>
+      <input type="number" step="0.01" name="amount" value="{{ tx.amount }}">
+    </div>
 
-    <dt>Account</dt>
-    <dd>{{ tx.account }}</dd>
+    <div>
+      <label>Account</label>
+      <input type="text" name="account" value="{{ tx.account }}">
+    </div>
 
-    <dt>Description</dt>
-    <dd>{{ tx.description }}</dd>
-  </dl>
+    <div style="grid-column: 1 / -1;">
+      <label>Description</label>
+      <textarea name="description" rows="2">{{ tx.description }}</textarea>
+    </div>
 
-  <p style="margin-top:1rem;">
-    <a href="{{ url_for('simple_index') }}">Back to list</a>
-  </p>
+    <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+      <button type="submit" name="action" value="update">Save changes</button>
+      <button type="submit" name="action" value="delete"
+              style="background:#b00020; color:#fff;">
+        Delete
+      </button>
+      <a href="{{ url_for('index') }}" style="align-self:center; margin-left:auto;">
+        Back to list
+      </a>
+    </div>
+  </form>
 </section>
 {% endblock %}

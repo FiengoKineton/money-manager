@@ -13,17 +13,17 @@ from __future__ import annotations
 
 import traceback
 
-"""try:
+try:
     from app_complete import app as full_app  # your existing heavy app
     app = full_app
     print("[money-manager] Using FULL app (app_complete.py).")
 except Exception as e:
     print("[money-manager] Failed to start full app, falling back to SIMPLE app.")
     print("Reason:", repr(e))
-    traceback.print_exc()"""
-from app_backup import app as simple_app
-app = simple_app
-print("[money-manager] SIMPLE app (app_backup.py) running.")
+    traceback.print_exc()
+    from app_backup import app as simple_app
+    app = simple_app
+    print("[money-manager] SIMPLE app (app_backup.py) running.")
 
 if __name__ == "__main__":
     # host=0.0.0.0 so you can open it from the phone browser too

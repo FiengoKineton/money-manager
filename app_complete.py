@@ -1,4 +1,5 @@
 # app.py
+import pandas as pd
 from datetime import date
 from flask import Flask, render_template, request, redirect, url_for
 
@@ -16,8 +17,24 @@ from utils.io_utils import (
     delete_transaction_record,
 )
 from utils.filters import filter_by_date, filter_by_types, filter_by_categories, filter_by_query
-from utils.stats import summary_totals, monthly_summary, expenses_by_category, cumulative_balance
-from utils.plots import plot_monthly_summary, plot_expenses_by_category, plot_cumulative_balance
+from utils.stats import (
+    summary_totals,
+    monthly_summary,
+    expenses_by_category,
+    cumulative_balance,
+    weekday_spending,
+    rolling_net_flow,
+    largest_expenses,
+    expenses_by_weekday,
+)
+from utils.plots import (
+    plot_monthly_summary,
+    plot_expenses_by_category,
+    plot_cumulative_balance,
+    plot_weekday_spending,
+    plot_rolling_net_flow,
+    plot_expenses_by_weekday,
+)
 
 
 app = Flask(__name__)
@@ -218,6 +235,67 @@ def transaction_detail(row_index):
         categories = INVESTMENT_CATEGORIES
 
     return render_template("transaction_detail.html", tx=tx, categories=categories)
+
+
+@app.route("/analysis")
+def analysis():
+    df = load_all()
+
+    # Empty dataset → show empty analysis nicely
+    if df.empty:
+        totals = {
+            "income": 0.0,
+            "expenses": 0.0,
+            "investments": 0.0,
+            "net": 0.0,
+            "savings_rate": 0.0,
+        }
+        return render_template(
+            "analysis.html",
+            totals=totals,
+            weekday_data=[],
+            top_expenses=[],
+        )
+
+    # High-level totals
+    totals = summary_totals(df)
+
+    # Analysis data
+    df_wd = weekday_spending(df)          # weekday totals
+    df_roll = rolling_net_flow(df)        # daily + rolling net
+    top_exp = largest_expenses(df, n=10).copy()
+
+    # Clean up top expenses for template
+    if not top_exp.empty:
+        if pd.api.types.is_datetime64_any_dtype(top_exp["date"]):
+            top_exp["date_str"] = top_exp["date"].dt.strftime("%Y-%m-%d")
+        else:
+            top_exp["date_str"] = top_exp["date"].astype(str)
+
+        for col in ["description", "category"]:
+            if col in top_exp.columns:
+                top_exp[col] = top_exp[col].fillna("")
+
+    # Monthly / category / cumulative
+    df_month = monthly_summary(df)
+    df_cat = expenses_by_category(df)
+    df_cum = cumulative_balance(df)
+
+    # Plots
+    plot_monthly_summary(df_month)
+    plot_expenses_by_category(df_cat)
+    plot_cumulative_balance(df_cum)
+    plot_weekday_spending(df_wd)
+    plot_rolling_net_flow(df_roll)
+
+    return render_template(
+        "analysis.html",
+        totals=totals,
+        weekday_data=df_wd.to_dict(orient="records"),
+        top_expenses=top_exp.to_dict(orient="records"),
+    )
+
+
 
 
 if __name__ == "__main__":

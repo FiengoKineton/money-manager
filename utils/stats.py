@@ -1,6 +1,8 @@
 # utils/stats.py
 import pandas as pd
 
+WEEKDAY_ORDER = ["Monday", "Tuesday", "Wednesday",
+                 "Thursday", "Friday", "Saturday", "Sunday"]
 
 def summary_totals(df: pd.DataFrame) -> dict:
     """Return total income, expense, investment, net and savings rate."""
@@ -98,3 +100,97 @@ def cumulative_balance(df: pd.DataFrame) -> pd.DataFrame:
     cum = df[["date", "signed_amount"]].copy()
     cum["balance"] = cum["signed_amount"].cumsum()
     return cum[["date", "balance"]]
+
+
+
+def weekday_spending(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Total expenses per weekday.
+    """
+    d = df[df["type"] == "expense"].copy()
+    if d.empty:
+        return pd.DataFrame(columns=["weekday_num", "weekday", "total"])
+
+    d["weekday_num"] = d["date"].dt.weekday
+    d["weekday"] = d["date"].dt.day_name()
+
+    out = (
+        d.groupby(["weekday_num", "weekday"])["amount"]
+        .sum()
+        .reset_index()
+        .rename(columns={"amount": "total"})
+        .sort_values("weekday_num")
+    )
+    return out
+
+
+def rolling_net_flow(df: pd.DataFrame, window: int = 30) -> pd.DataFrame:
+    """
+    Daily net cash flow and rolling window sum.
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["date", "daily_net", "rolling_net"])
+
+    d = df.copy()
+    sign = d["type"].map({"income": 1.0, "expense": -1.0, "investment": 0.0}).fillna(0.0)
+    d["signed_amount"] = d["amount"] * sign
+
+    daily = (
+        d.groupby("date")["signed_amount"]
+        .sum()
+        .reset_index()
+        .rename(columns={"signed_amount": "daily_net"})
+        .sort_values("date")
+    )
+    daily["rolling_net"] = daily["daily_net"].rolling(window, min_periods=1).sum()
+    return daily
+
+
+def largest_expenses(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
+    """
+    Top-n expense transactions by amount.
+    """
+    d = df[df["type"] == "expense"].copy()
+    if d.empty:
+        return pd.DataFrame(columns=df.columns)
+
+    return d.sort_values("amount", ascending=False).head(n)
+
+
+def expenses_by_weekday(df):
+    """
+    Return a DataFrame with total expenses per weekday.
+
+    Columns: weekday, total
+    """
+    if df.empty:
+        return pd.DataFrame(columns=["weekday", "total"])
+
+    tmp = df.copy()
+    # assume df["date"] is datetime; if not, this will blow up and you *should* fix it
+    tmp["weekday"] = tmp["date"].dt.day_name()
+
+    # only expenses; amount_signed should be negative for expenses
+    if "amount_signed" in tmp.columns:
+        mask = tmp["type"] == "expense"
+        grp = (
+            tmp[mask]
+            .groupby("weekday", as_index=False)["amount_signed"]
+            .sum()
+        )
+        grp["total"] = -grp["amount_signed"]
+    else:
+        # fallback: amount is positive, just sum it for expenses
+        mask = tmp["type"] == "expense"
+        grp = (
+            tmp[mask]
+            .groupby("weekday", as_index=False)["amount"]
+            .sum()
+            .rename(columns={"amount": "total"})
+        )
+
+    # order Monday → Sunday
+    grp = grp.set_index("weekday").reindex(WEEKDAY_ORDER).reset_index()
+    grp = grp.dropna(subset=["total"])
+
+    return grp[["weekday", "total"]]
