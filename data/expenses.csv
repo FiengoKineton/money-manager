@@ -90,3 +90,7 @@ id,date,category,sub_category,amount,account,description,created_at
 89,2025-12-14,Transportation,,10.0,Card,Bergamo Airport,
 90,2025-12-14,Eating out,,40.4,,Glovo Sushi,
 91,2025-12-14,Transportation,,14.9,Card,Taxi,
+92,2025-12-15,Coffe,,8.2,,,
+93,2025-12-15,Coffe,,1.6,Card,,
+94,2025-12-15,Lost,,2.58,,,
+95,2025-12-15,Pre-paid card,,224.0,,Stockholm's trip,
