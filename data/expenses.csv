@@ -101,3 +101,6 @@ id,date,category,sub_category,amount,account,description,created_at
 100,2025-12-20,Transportation,,26.2,,,
 101,2025-12-21,Going out,,27.3,,,
 102,2025-12-21,Eating out,,42.91,,,
+103,2025-12-21,Coffe,,8.0,,,
+104,2025-12-21,Transportation,,2.2,,,
+105,2025-12-21,Pre-paid card,,374.0,,Jul gifts,
