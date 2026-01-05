@@ -115,3 +115,7 @@ id,date,category,sub_category,amount,account,description,created_at
 114,2025-12-30,Restaurants,,157.5,Card,Sushi,
 115,2025-12-31,Groceries,,25.0,Card,Struffoli,
 116,2026-01-01,Claudia,,26.95,,Poke,
+117,2026-01-02,Coffe,,12.0,,,
+118,2026-01-05,Subscriptions,,10.0,,Google,
+119,2026-01-05,Coffe,,12.5,,,
+120,2026-01-05,Shopping,,580.0,Cash,K-ring,
