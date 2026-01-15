@@ -121,3 +121,7 @@ id,date,category,sub_category,amount,account,description,created_at
 120,2026-01-05,Shopping,,580.0,Cash,K-ring,
 121,2026-01-07,Restaurants,,23.82,,,
 122,2026-01-08,Going out,,15.7,,,
+123,2026-01-11,Going out,,30.7,,Uci cinemaa,
+124,2026-01-12,Coffe,,15.0,,,
+125,2026-01-15,Other,,6.0,,,
+126,2026-01-15,Claudia,,283.4,Credit,30percent Olympic SPA,
