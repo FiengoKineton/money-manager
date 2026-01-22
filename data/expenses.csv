@@ -127,5 +127,11 @@ id,date,category,sub_category,amount,account,description,created_at
 126,2026-01-15,Claudia,,283.4,Credit,30percent Olympic SPA,
 127,2026-01-17,Coffe,,11.0,,,
 128,2026-01-17,Subscriptions,,5.99,,Glovo,
-129,2026-01-17,Claudia,,62.88,,Sushi,
+129,2026-01-17,Claudia,,60.55,,Sushi,
 130,2026-01-17,Lost,,1.0,,,
+131,2026-01-18,Claudia,,25.4,,Pizza,2026-01-22T11:30:24
+132,2026-01-19,Transportation,,42.75,,AutoGrill,2026-01-22T11:30:57
+133,2026-01-20,Transportation,,0.84,,EasyPark,2026-01-22T11:31:37
+134,2026-01-20,Travel,,40.3,,Cibo,2026-01-22T11:31:57
+135,2026-01-21,Claudia,,881.6,,SpaHotelDolomiti,2026-01-22T11:32:38
+136,2026-01-21,Other,,15.8,,,2026-01-22T11:32:54
