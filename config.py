@@ -68,6 +68,7 @@ DEFAULT_TYPES = ["expense", "income", "investment"]
 def default_date_range():
     """Return (start_date, end_date) for current year as ISO strings."""
     today = date.today()
-    start = date(today.year, 1, 1)
+    #start = date(today.year, 1, 1)
+    start = date(2025, 9, 7)
     end = today # date(today.year, 12, 31)
     return start.isoformat(), end.isoformat()
