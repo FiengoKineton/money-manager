@@ -10,3 +10,4 @@ id,date,category,sub_category,amount,account,description,created_at
 9,2025-12-19,PoliMi,,1474.0,,1st payment,2025-12-19T12:53:58
 10,2026-01-02,Cash,,2100.0,,Compro Oro 28gr,
 11,2026-01-30,PoliMi,,722.22,,2nd payment,2026-01-30T10:05:47
+12,2026-02-11,PoliMi,,2200.0,,,
