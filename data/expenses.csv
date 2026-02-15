@@ -151,3 +151,7 @@ id,date,category,sub_category,amount,account,description,created_at
 150,2026-02-09,Going out,,22.7,,Glovo,
 151,2026-02-10,Other,,23.9,,,
 152,2026-02-12,Eating out,,46.12,,Glovo,
+153,2026-02-14,Groceries,,88.87,,,
+154,2026-02-15,Other,,7.7,,,
+155,2026-02-15,Shopping,,125.9,,,
+156,2026-02-15,Gifts,,100.0,,Sara,
