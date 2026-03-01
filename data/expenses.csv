@@ -174,6 +174,12 @@ id,date,category,sub_category,amount,account,description,created_at
 173,2026-02-26,Claudia,Pizza,35.0,,,2026-02-27T15:20:11
 174,2026-02-27,Health,Aou Federico II,26.2,,,2026-02-27T15:20:42
 175,2026-02-27,Health,Drugs,39.5,,,2026-02-27T15:21:02
-176,2026-02-27,Other,,10.0,,,2026-02-27T15:21:15
+176,2026-02-27,Other,,20.0,,,2026-02-27T15:21:15
 177,2026-02-27,Transportation,,3.0,,,2026-02-27T15:21:29
-178,2026-02-27,Lost,,-13.61,,,2026-02-27T15:24:03
+179,2026-02-28,Claudia,,25.5,,Birdys bakery,
+180,2026-02-28,Gifts,,158.8,,Papa e Andrea,
+181,2026-02-28,Transportation,,4.4,,,
+182,2026-03-01,Other,,29.8,,,
+183,2026-03-01,Claudia,,178.2,,Ski rent,
+184,2026-02-28,Pre-paid card,,138.0,,,
+185,2026-02-27,Health,,24.84,,,
