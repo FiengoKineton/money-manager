@@ -1,7 +1,8 @@
 # app.py
-import pandas as pd
+import os, pandas as pd
 from datetime import date
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
+from config import DOCUMENTS_DIR 
 
 from config import (
     EXPENSE_CATEGORIES,
@@ -309,6 +310,31 @@ def analysis():
     )
 
 
+
+@app.route("/documents")
+def documents():
+    return render_template("documents.html")
+
+@app.route("/api/files/<folder>")
+def get_files(folder):
+    """Returns a JSON list of files in the requested folder."""
+    if folder not in ["Cedolini", "Tasse - Detrazioni Fiscali"]:
+        return jsonify({"error": "Invalid folder"}), 400
+        
+    folder_path = DOCUMENTS_DIR / folder
+    if not folder_path.exists():
+        return jsonify({"files": []})
+        
+    # Get all files (ignore subdirectories)
+    files = [f for f in os.listdir(folder_path) if os.path.isfile(folder_path / f)]
+    return jsonify({"files": sorted(files)})
+
+@app.route("/document/<folder>/<filename>")
+def serve_document(folder, filename):
+    """Serves the actual file to the iframe."""
+    if folder not in ["Cedolini", "Tasse - Detrazioni Fiscali"]:
+        return "Invalid folder", 400
+    return send_from_directory(DOCUMENTS_DIR / folder, filename)
 
 
 if __name__ == "__main__":

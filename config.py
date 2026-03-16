@@ -7,6 +7,12 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True, parents=True)
 
+DOCUMENTS_DIR = BASE_DIR / "Documents"
+DOCUMENTS_DIR.mkdir(exist_ok=True, parents=True)
+
+(DOCUMENTS_DIR / "Cedolini").mkdir(exist_ok=True, parents=True)
+(DOCUMENTS_DIR / "Tasse - Detrazioni Fiscali").mkdir(exist_ok=True, parents=True)
+
 EXPENSES_CSV = DATA_DIR / "expenses.csv"
 INCOMES_CSV = DATA_DIR / "incomes.csv"
 INVESTMENTS_CSV = DATA_DIR / "investments.csv"
