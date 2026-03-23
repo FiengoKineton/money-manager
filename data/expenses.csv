@@ -189,4 +189,7 @@ id,date,category,sub_category,amount,account,description,created_at
 189,2026-03-08,Eating out,,80.0,Cash,,2026-03-08T14:44:37
 190,2026-03-03,Eating out,,20.0,Cash,,2026-03-08T14:45:03
 191,2026-03-12,Going out,Glovo,28.88,,,2026-03-16T17:12:00
-192,2026-03-19,Going out,Glovo,32.58,,,2026-03-19T14:15:58
+192,2026-03-19,Going out,Glovo,32.57,,,2026-03-19T14:15:58
+193,2026-03-21,Claudia,KFC,49.68,,,2026-03-23T15:38:20
+194,2026-03-22,Transportation,parking,16.0,,,2026-03-23T15:38:36
+195,2026-03-22,Going out,Cinema,10.5,,,2026-03-23T15:38:53
