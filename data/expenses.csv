@@ -206,3 +206,8 @@ id,date,category,sub_category,amount,account,description,created_at
 206,2026-04-04,Family,Uova di Pascqua,35.67,,,2026-04-07T19:04:07
 207,2026-04-05,Transportation,Autogrill,16.0,,,2026-04-07T19:04:25
 208,2026-04-07,Transportation,Autogrill,7.19,,,2026-04-07T19:04:41
+209,2026-04-11,Other,,10.0,,,2026-04-14T18:45:41
+210,0012-04-14,Eating out,Glovo,27.3,,,2026-04-14T18:46:05
+211,2026-04-14,Other,,6.0,,,2026-04-14T18:47:41
+212,2026-04-12,Charity,Starbucks,13.87,,,2026-04-14T18:48:07
+213,2026-04-12,Eating out,Glovo,27.3,,,2026-04-14T18:49:42

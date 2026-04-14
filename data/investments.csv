@@ -4,3 +4,4 @@ id,date,category,sub_category,amount,account,description,created_at
 3,2026-01-27,Deposit,,1000.0,Liquidita,,2026-01-27T10:22:16
 4,2026-02-09,Deposit,,150.0,,,2026-02-09T13:24:33
 5,2026-03-09,Deposit,,150.0,,,2026-03-10T13:54:41
+6,2026-04-14,Deposit,,150.0,,,2026-04-14T18:48:41
