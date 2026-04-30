@@ -26,9 +26,22 @@
       <input type="text" name="sub_category">
     </div>
 
-    <div>
-      <label>Amount</label>
-      <input type="number" step="0.01" name="amount" required>
+    <!-- MULTI AMOUNT BLOCK -->
+    <div style="grid-column: 1 / -1;">
+      <label>Amounts (multiple)</label>
+
+      <div id="amount-list">
+        <input type="number" step="0.01" class="amount-input" placeholder="0.00">
+      </div>
+
+      <button type="button" onclick="addAmountField()">+ Add another</button>
+
+      <p>
+        <strong>Total: € <span id="total-amount">0.00</span></strong>
+      </p>
+
+      <!-- THIS is what backend reads -->
+      <input type="hidden" name="amount" id="amount-hidden">
     </div>
 
     <div>
@@ -46,4 +59,46 @@
     </div>
   </form>
 </section>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+function updateTotal() {
+  const inputs = document.querySelectorAll('.amount-input');
+  let total = 0;
+
+  inputs.forEach(input => {
+    const val = parseFloat(input.value);
+    if (!isNaN(val)) total += val;
+  });
+
+  document.getElementById('total-amount').innerText = total.toFixed(2);
+  document.getElementById('amount-hidden').value = total.toFixed(2);
+}
+
+function addAmountField() {
+  const container = document.getElementById('amount-list');
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.step = '0.01';
+  input.className = 'amount-input';
+  input.placeholder = '0.00';
+
+  input.addEventListener('input', updateTotal);
+
+  container.appendChild(input);
+}
+
+// initialize everything
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.amount-input').forEach(input => {
+    input.addEventListener('input', updateTotal);
+  });
+
+  // 🔥 important: initialize hidden value to 0
+  updateTotal();
+});
+</script>
 {% endblock %}

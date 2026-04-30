@@ -1,12 +1,24 @@
 # utils/io_utils.py
 import csv
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd
 
 from config import EXPENSES_CSV, INCOMES_CSV, INVESTMENTS_CSV, DEFAULT_TYPES
+
+
+def next_credit_due(today=None, due_day=15):
+    today = today or date.today()
+
+    if today.day < due_day:
+        return date(today.year, today.month, due_day)
+
+    if today.month == 12:
+        return date(today.year + 1, 1, due_day)
+
+    return date(today.year, today.month + 1, due_day)
 
 
 def _ensure_csv(path: Path, fieldnames: List[str]) -> None:

@@ -11,7 +11,9 @@
     <h1>Giuseppe's Money Manager</h1>
     <nav>
       <a href="{{ url_for('index') }}">Dashboard</a>
+      <a href="{{ url_for('pending_page') }}">Pending & Recurring</a>
       <a href="{{ url_for('analysis') }}">Analysis</a>
+      <a href="{{ url_for('forecast') }}">Forecast</a>
       <a href="{{ url_for('documents') }}">Documents</a>
       <a href="{{ url_for('add_transaction', type='expense') }}">+ Expense</a>
       <a href="{{ url_for('add_transaction', type='income') }}">+ Income</a>
@@ -48,6 +50,9 @@
       });
     });
   </script>
+
+  <!-- PAGE-SPECIFIC JS -->
+  {% block scripts %}{% endblock %}
 
 </body>
 </html>

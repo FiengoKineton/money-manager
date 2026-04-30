@@ -208,6 +208,10 @@ body {
   border-left: 4px solid #01579b;
 }
 
+.summary-card.pending {
+  border-left: 6px solid #f59f00;  /* orange */
+}
+
 /* Plots */
 .plots {
   display: grid;

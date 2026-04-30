@@ -16,8 +16,14 @@ from utils.io_utils import (
     append_transaction,
     update_transaction_record,
     delete_transaction_record,
+    next_credit_due,
 )
-from utils.filters import filter_by_date, filter_by_types, filter_by_categories, filter_by_query
+from utils.filters import (
+    filter_by_date, 
+    filter_by_types, 
+    filter_by_categories, 
+    filter_by_query,
+)
 from utils.stats import (
     summary_totals,
     monthly_summary,
@@ -37,6 +43,15 @@ from utils.plots import (
     plot_rolling_net_flow,
     plot_expenses_by_weekday,
 )
+from utils.pending_utils import (
+    append_pending, 
+    load_pending, 
+    mark_executed,
+)
+from utils.recurring_utils import (
+    generate_recurring,
+)
+
 
 
 app = Flask(__name__)
@@ -44,6 +59,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+    process_pending()
+    generate_recurring()
     df = load_all()
 
     today = pd.Timestamp.today()
@@ -102,9 +119,21 @@ def index():
     # All unique categories in filtered data (for dropdown)
     all_categories = sorted(df["category"].dropna().unique().tolist()) if not df.empty else []
 
+    pending = load_pending()
+
+    today = date.today()
+    pending_total = 0.0
+
+    for tx in pending:
+        if tx["status"] == "pending":
+            pending_total += float(tx["amount"])
+
+    net_after_pending = totals["net"] - pending_total
+
     return render_template(
         "index.html",
         transactions=df_filtered.to_dict(orient="records"),
+        transactions_initial=df_filtered.head(50).to_dict(orient="records"),
         totals=totals,
         start=start,
         end=end,
@@ -115,6 +144,8 @@ def index():
         q=q,
         stats_this_month=stats_this_month,
         stats_3_months=stats_3_months,
+        net_after_pending=net_after_pending,
+        pending_this_month=pending_total,
     )
 
 
@@ -144,8 +175,14 @@ def add_transaction():
             "description": description,
         }
 
-        append_transaction(tx)
+        account = tx.get("account", "").lower()
 
+        if account == "credit":
+            due_date = next_credit_due()
+            append_pending(tx, due_date)
+        else:
+            append_transaction(tx)
+        
         return redirect(url_for("index"))
 
     # GET
@@ -310,6 +347,74 @@ def analysis():
     )
 
 
+def process_pending():
+    pending = load_pending()
+    today = date.today()
+
+    credit_group = {}   # group by due_date
+    other_to_execute = []
+
+    # --- split pending ---
+    for tx in pending:
+        if tx["status"] != "pending":
+            continue
+
+        due = date.fromisoformat(tx["date_due"])
+
+        if due > today:
+            continue
+
+        amount = float(tx["amount"])
+
+        # CREDIT → group
+        if tx["account"].lower() == "credit":
+            key = tx["date_due"]
+
+            if key not in credit_group:
+                credit_group[key] = 0.0
+
+            credit_group[key] += amount
+
+        else:
+            other_to_execute.append(tx)
+
+    # --- execute normal pending ---
+    for tx in other_to_execute:
+        append_transaction({
+            "type": tx["type"],
+            "date": tx["date_due"],
+            "category": tx["category"],
+            "sub_category": "",
+            "amount": float(tx["amount"]),
+            "account": tx["account"],
+            "description": tx["description"],
+        })
+
+        mark_executed(int(tx["id"]))
+
+    # --- execute CREDIT grouped ---
+    for due_date, total in credit_group.items():
+
+        append_transaction({
+            "type": "expense",
+            "date": due_date,
+            "category": "Credit Card",
+            "sub_category": "",
+            "amount": total,
+            "account": "credit",
+            "description": f"Credit card payment ({due_date})",
+        })
+
+        # mark ALL credit rows with that due_date as executed
+        for tx in pending:
+            if (
+                tx["status"] == "pending"
+                and tx["account"].lower() == "credit"
+                and tx["date_due"] == due_date
+            ):
+                mark_executed(int(tx["id"]))
+
+
 
 @app.route("/documents")
 def documents():
@@ -336,6 +441,100 @@ def serve_document(folder, filename):
         return "Invalid folder", 400
     return send_from_directory(DOCUMENTS_DIR / folder, filename)
 
+@app.route("/pending", methods=["GET", "POST"])
+def pending_page():
+    from utils.recurring_utils import (
+        load_recurring,
+        append_recurring,
+        delete_recurring,
+    )
+
+    if request.method == "POST":
+        action = request.form.get("action")
+
+        if action == "add":
+            append_recurring({
+                "name": request.form.get("name"),
+                "type": request.form.get("type"),
+                "amount": float(request.form.get("amount")),
+                "day_of_month": int(request.form.get("day_of_month")),
+                "category": request.form.get("category"),
+            })
+
+        elif action == "delete":
+            delete_recurring(int(request.form.get("id")))
+
+    pending = load_pending()
+    recurring = load_recurring()
+
+    return render_template(
+        "pending.html",
+        pending=pending,
+        recurring=recurring,
+        EXPENSE_CATEGORIES=EXPENSE_CATEGORIES,
+        INCOME_CATEGORIES=INCOME_CATEGORIES,
+        INVESTMENT_CATEGORIES=INVESTMENT_CATEGORIES
+    )
+
+
+@app.route("/forecast", methods=["GET", "POST"])
+def forecast():
+    import numpy as np
+
+    # default values
+    result = None
+
+    if request.method == "POST":
+        monthly_income = float(request.form.get("income", 0))
+        monthly_expenses = float(request.form.get("expenses", 0))
+        monthly_invest = float(request.form.get("investment", 0))
+        years = int(request.form.get("years", 5))
+        rate = float(request.form.get("rate", 5)) / 100.0
+
+        # starting point (from your real data)
+        df = load_all()
+        totals = summary_totals(df)
+
+        net = totals["net"]
+        invested = totals["investments"]
+
+        months = years * 12
+
+        values = []
+        total = net + invested
+
+        for m in range(months):
+            # monthly savings
+            savings = monthly_income - monthly_expenses - monthly_invest
+
+            # grow investments
+            total = total * (1 + rate / 12)
+
+            # add flows
+            total += savings + monthly_invest
+
+            values.append(total)
+
+        # save plot
+        import matplotlib.pyplot as plt
+
+        plt.figure()
+        plt.plot(values)
+        plt.title("Wealth Projection")
+        plt.xlabel("Months")
+        plt.ylabel("€")
+        plt.grid()
+
+        plot_path = os.path.join("static", "plots", "forecast.png")
+        plt.savefig(plot_path)
+        plt.close()
+
+        result = {
+            "final_value": values[-1],
+            "years": years
+        }
+
+    return render_template("forecast.html", result=result)
 
 if __name__ == "__main__":
     app.run(debug=True)

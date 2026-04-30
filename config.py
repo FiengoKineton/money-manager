@@ -25,6 +25,7 @@ EXPENSE_CATEGORIES = sorted([
     "Groceries",
     "Restaurants",
     "Eating out",
+    "Eating in",
     "Going out",
     "Pre-paid card",
     "Claudia",
@@ -43,6 +44,7 @@ EXPENSE_CATEGORIES = sorted([
     "Other",
     "Lost",
     "Coffe",
+    "Housing",
 ])
 
 

@@ -83,11 +83,22 @@
     <h3>Investments (cash out)</h3>
     <p>{{ '%.2f'|format(totals.investments) }}</p>
   </div>
-  <div class="summary-card net">
+</section>
+
+<section class="summary" style="margin-top: 15px;">
+  
+  <div class="summary-card pending" style="flex:1;">
+    <h3>Net (after pending this month)</h3>
+    <p>{{ '%.2f'|format(net_after_pending) }}</p>
+    <small>Pending this month: {{ '%.2f'|format(pending_this_month) }}</small>
+  </div>
+
+  <div class="summary-card net" style="flex:1;">
     <h3>Net</h3>
     <p>{{ '%.2f'|format(totals.net) }}</p>
     <small>Savings rate: {{ '%.1f'|format(totals.savings_rate) }} %</small>
   </div>
+
 </section>
 
 <section class="summary" style="margin-top: 15px;">
@@ -147,7 +158,7 @@
       </tr>
     </thead>
     <tbody>
-    {% for tx in transactions %}
+    {% for tx in transactions_initial %}
     <tr class="row-{{ tx.type }} clickable-row"
         data-href="{{ url_for('transaction_detail', row_index=tx.row_index) }}">
 
@@ -174,6 +185,43 @@
     {% endfor %}
     </tbody>
 
+    <tbody id="full-transactions" style="display:none;">
+      {% for tx in transactions[50:] %}
+      <tr class="row-{{ tx.type }} clickable-row"
+          data-href="{{ url_for('transaction_detail', row_index=tx.row_index) }}">
+        <td>{{ tx.date_str }}</td>
+        <td>{{ tx.type.capitalize() }}</td>
+        <td>{{ tx.category }}</td>
+        <td>{{ tx.description }}</td>
+        <td>{{ tx.account }}</td>
+        <td>{{ tx.amount_str }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
+  <button id="toggle-btn" onclick="toggleTransactions()">
+    Show more
+  </button>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let expanded = false;
+
+function toggleTransactions() {
+  const full = document.getElementById("full-transactions");
+  const btn = document.getElementById("toggle-btn");
+
+  if (!expanded) {
+    full.style.display = "table-row-group";
+    btn.innerText = "Show less";
+  } else {
+    full.style.display = "none";
+    btn.innerText = "Show more";
+  }
+
+  expanded = !expanded;
+}
+</script>
 {% endblock %}
