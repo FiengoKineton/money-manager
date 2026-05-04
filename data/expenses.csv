@@ -223,3 +223,6 @@ id,date,category,sub_category,amount,account,description,created_at
 223,2026-04-28,Family,Riccardo,250.0,,,2026-04-28T10:27:18
 224,2026-04-29,Going out,First Paid Lunch to Dad,185.0,,,2026-04-30T11:24:02
 225,2026-04-29,Eating out,House Pizza Party,112.88,,,2026-04-30T11:24:56
+226,2026-05-03,Subscriptions,,10.0,auto,OneDrive,2026-05-04T09:48:35
+227,2026-05-01,Groceries,Sushi,106.5,,,2026-05-04T09:52:38
+228,2026-05-04,Lost,,-0.45,,,2026-05-04T10:01:02
