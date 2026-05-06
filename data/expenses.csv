@@ -226,3 +226,9 @@ id,date,category,sub_category,amount,account,description,created_at
 226,2026-05-03,Subscriptions,,10.0,auto,OneDrive,2026-05-04T09:48:35
 227,2026-05-01,Groceries,Sushi,106.5,,,2026-05-04T09:52:38
 228,2026-05-04,Lost,,-0.45,,,2026-05-04T10:01:02
+229,2026-05-05,Other,,31.2,,,2026-05-06T20:09:29
+230,2026-05-05,Transportation,Metro,2.2,,,2026-05-06T20:09:51
+231,2026-05-05,Eating in,Glovo,24.09,,,2026-05-06T20:10:26
+232,2026-05-06,Other,,18.3,,,2026-05-06T20:10:55
+233,2026-05-06,Eating out,PoliMi,23.0,,,2026-05-06T20:11:09
+234,2026-05-06,Eating in,Glovo,53.5,,,2026-05-06T20:25:36
