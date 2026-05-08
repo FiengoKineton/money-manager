@@ -1,7 +1,7 @@
 # app.py
 import os, pandas as pd
 from datetime import date
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory, send_from_directory
 from config import DOCUMENTS_DIR 
 
 from config import (
@@ -51,11 +51,21 @@ from utils.pending_utils import (
 from utils.recurring_utils import (
     generate_recurring,
 )
-
+from utils.interactive_plots import (
+    chart_monthly_summary,
+    chart_expenses_by_category,
+    chart_cumulative_balance,
+    chart_rolling_net_flow,
+    chart_weekday_spending,
+)
 
 
 app = Flask(__name__)
 
+
+@app.route("/documents-background/<path:filename>")
+def documents_background(filename):
+    return send_from_directory("Documents", filename)
 
 @app.route("/")
 def index():
@@ -112,6 +122,12 @@ def index():
     df_cum = cumulative_balance(df_filtered)
 
     # Plots
+    charts = {
+        "monthly_summary": chart_monthly_summary(df_month),
+        "expenses_by_category": chart_expenses_by_category(df_cat),
+        "cumulative_balance": chart_cumulative_balance(df_cum),
+    }
+
     plot_monthly_summary(df_month)
     plot_expenses_by_category(df_cat)
     plot_cumulative_balance(df_cum)
@@ -146,6 +162,7 @@ def index():
         stats_3_months=stats_3_months,
         net_after_pending=net_after_pending,
         pending_this_month=pending_total,
+        charts=charts,
     )
 
 
@@ -332,6 +349,14 @@ def analysis():
     df_cat = expenses_by_category(df)
     df_cum = cumulative_balance(df)
 
+    charts = {
+        "monthly_summary": chart_monthly_summary(df_month),
+        "rolling_net_flow": chart_rolling_net_flow(df_roll),
+        "expenses_by_category": chart_expenses_by_category(df_cat),
+        "weekday_spending": chart_weekday_spending(df_wd),
+        "cumulative_balance": chart_cumulative_balance(df_cum),
+    }
+
     # Plots
     plot_monthly_summary(df_month)
     plot_expenses_by_category(df_cat)
@@ -344,6 +369,7 @@ def analysis():
         totals=totals,
         weekday_data=df_wd.to_dict(orient="records"),
         top_expenses=top_exp.to_dict(orient="records"),
+        charts=charts,
     )
 
 
@@ -447,6 +473,8 @@ def pending_page():
         load_recurring,
         append_recurring,
         delete_recurring,
+        generate_recurring,
+        next_due_date_for_rule,
     )
 
     if request.method == "POST":
@@ -457,6 +485,7 @@ def pending_page():
                 "name": request.form.get("name"),
                 "type": request.form.get("type"),
                 "amount": float(request.form.get("amount")),
+                "frequency": int(request.form.get("frequency", 1)),
                 "day_of_month": int(request.form.get("day_of_month")),
                 "category": request.form.get("category"),
             })
@@ -466,8 +495,14 @@ def pending_page():
 
         return redirect(url_for("pending_page"))
 
+    generate_recurring()
+    process_pending()
+
     pending = load_pending()
     recurring = load_recurring()
+
+    for r in recurring:
+        r["next_payment"] = next_due_date_for_rule(r).isoformat()
 
     return render_template(
         "pending.html",

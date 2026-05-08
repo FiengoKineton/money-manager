@@ -68,7 +68,6 @@ id,date,category,sub_category,amount,account,description,created_at
 67,2025-11-29,Eating out,,39.92,Card,Sushi Glovo,2025-11-29T22:10:21
 68,2025-11-30,Going out,,20.0,card,Pizza Glovo,2025-11-30T23:05:00
 69,2025-12-02,Gifts,,61.69,,Secret Santa + Rubik Cubes,2025-12-02T17:50:30
-70,2025-12-02,Subscriptions,Amazon Prime,49.9,Card,,2025-12-02T17:55:24
 71,2025-12-04,Other,,15.8,Card,,
 72,2025-12-04,Subscriptions,Microsoft,10.0,,,
 73,2025-12-04,Restaurants,,12.5,,Pranzo colleghi,
@@ -232,3 +231,4 @@ id,date,category,sub_category,amount,account,description,created_at
 232,2026-05-06,Other,,18.3,,,2026-05-06T20:10:55
 233,2026-05-06,Eating out,PoliMi,23.0,,,2026-05-06T20:11:09
 234,2026-05-06,Eating in,Glovo,53.5,,,2026-05-06T20:25:36
+236,2025-12-02,Subscriptions,,49.9,auto,Amazon Prime,2026-05-08T13:09:39

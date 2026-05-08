@@ -108,18 +108,6 @@
   </div>
 </section>
 
-<section class="plots">
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/monthly_summary.png') }}" alt="Monthly summary">
-  </div>
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/expenses_by_category.png') }}" alt="Expenses by category">
-  </div>
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/cumulative_balance.png') }}" alt="Cumulative balance">
-  </div>
-</section>
-
 <section class="summary" style="margin-top: 25px; margin-bottom: 25px;">
   
   <div class="summary-card" style="flex: 1;">
@@ -143,6 +131,24 @@
   </div>
 
 </section>
+
+<section class="dashboard-charts dashboard-charts-home">
+  <div class="chart-card chart-full">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.monthly_summary|safe }}
+  </div>
+
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.expenses_by_category|safe }}
+  </div>
+
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.cumulative_balance|safe }}
+  </div>
+</section>
+
 
 <section class="transactions">
   <h2>Transactions</h2>

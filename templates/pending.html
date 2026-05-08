@@ -2,17 +2,18 @@
 
 {% block content %}
 
-<section class="form-section">
+<section class="form-section pending-card">
   <h2>Add Recurring Payment</h2>
 
-  <form method="post" class="transaction-form">
+  <form method="post" class="recurring-form">
     <input type="hidden" name="action" value="add">
-    <div>
+
+    <div class="form-field form-field-wide">
       <label>Name</label>
       <input type="text" name="name" placeholder="Condominio, Parking..." required>
     </div>
 
-    <div>
+    <div class="form-field">
       <label>Type</label>
       <select name="type" id="type-select">
         <option value="expense">Expense</option>
@@ -21,31 +22,39 @@
       </select>
     </div>
 
-    <div>
+    <div class="form-field">
       <label>Category</label>
       <select name="category" id="category-select" required>
         <!-- JS will populate this -->
       </select>
     </div>
 
-    <div>
+    <div class="form-field">
       <label>Amount (€)</label>
       <input type="number" step="0.01" name="amount" required>
     </div>
 
-    <div>
+    <div class="form-field">
       <label>Day of month</label>
       <input type="number" name="day_of_month" min="1" max="31" required>
     </div>
 
-    <div>
+    <div class="form-field">
+      <label>Repeat every</label>
+      <div class="frequency-input">
+        <input type="number" name="frequency" min="1" max="120" value="1" required>
+        <span>month(s)</span>
+      </div>
+    </div>
+
+    <div class="form-actions">
       <button type="submit">Add recurring</button>
     </div>
   </form>
 </section>
 
 
-<section class="transactions">
+<section class="transactions pending-card">
   <h2>Recurring Rules</h2>
 
   {% if recurring %}
@@ -56,16 +65,20 @@
         <th>Type</th>
         <th>Amount</th>
         <th>Day</th>
+        <th>Frequency</th>
+        <th>Next Payment</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       {% for r in recurring %}
-      <tr>
+      <tr class="row-{{ r.type|lower }}">
         <td>{{ r.name }}</td>
         <td>{{ r.type }}</td>
         <td>{{ r.amount }}</td>
         <td>{{ r.day_of_month }}</td>
+        <td>Every {{ r.frequency }} month{% if r.frequency|int != 1 %}s{% endif %}</td>
+        <td>{{ r.next_payment }}</td>
         <td>
             <form method="post" style="display:inline;">
             <input type="hidden" name="action" value="delete">
@@ -83,7 +96,7 @@
 </section>
 
 
-<section class="transactions">
+<section class="transactions pending-card">
   <h2>Pending Payments</h2>
 
   {% if pending %}
@@ -98,7 +111,7 @@
     </thead>
     <tbody>
       {% for tx in pending %}
-      <tr>
+      <tr class="row-{{ tx.type|lower }}">
         <td>{{ tx.date_due }}</td>
         <td>{{ tx.category }}</td>
         <td>{{ tx.amount }}</td>

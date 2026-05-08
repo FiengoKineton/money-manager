@@ -5,8 +5,9 @@
   <title>Money Manager</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
-<body>
+<body style="--page-bg-image: url('{{ url_for('documents_background', filename='background.jpg') }}');">
   <header class="header">
     <h1>Giuseppe's Money Manager</h1>
     <nav>
@@ -49,6 +50,26 @@
         });
       });
     });
+
+    function toggleChartSize(button) {
+      const card = button.closest(".chart-card");
+      card.classList.toggle("chart-expanded");
+
+      if (card.classList.contains("chart-expanded")) {
+        button.innerText = "Close";
+      } else {
+        button.innerText = "Expand";
+      }
+
+      setTimeout(() => {
+        const plots = card.querySelectorAll(".js-plotly-plot");
+        plots.forEach(plot => {
+          if (window.Plotly) {
+            Plotly.Plots.resize(plot);
+          }
+        });
+      }, 100);
+    }
   </script>
 
   <!-- PAGE-SPECIFIC JS -->

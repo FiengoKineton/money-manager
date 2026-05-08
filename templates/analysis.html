@@ -26,24 +26,29 @@
 
 <h2>Visual summary</h2>
 <div class="analysis-plots-grid">
-  <!-- TOP: line charts -->
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/monthly_summary.png') }}"
-         alt="Monthly summary">
-  </div>
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/rolling_net_flow.png') }}"
-         alt="Net cash flow (daily & rolling)">
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.monthly_summary|safe }}
   </div>
 
-  <!-- BOTTOM: bar charts -->
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/expenses_by_category.png') }}"
-         alt="Expenses by category">
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.rolling_net_flow|safe }}
   </div>
-  <div class="plot">
-    <img src="{{ url_for('static', filename='plots/expenses_by_weekday.png') }}"
-         alt="Expenses by weekday">
+
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.expenses_by_category|safe }}
+  </div>
+
+  <div class="chart-card">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.weekday_spending|safe }}
+  </div>
+
+  <div class="chart-card chart-wide">
+    <button type="button" class="expand-chart-btn" onclick="toggleChartSize(this)">Expand</button>
+    {{ charts.cumulative_balance|safe }}
   </div>
 </div>
 
