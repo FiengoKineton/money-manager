@@ -59,8 +59,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    process_pending()
     generate_recurring()
+    process_pending()
     df = load_all()
 
     today = pd.Timestamp.today()
@@ -463,6 +463,8 @@ def pending_page():
 
         elif action == "delete":
             delete_recurring(int(request.form.get("id")))
+
+        return redirect(url_for("pending_page"))
 
     pending = load_pending()
     recurring = load_recurring()
