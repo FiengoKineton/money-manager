@@ -233,3 +233,5 @@ id,date,category,sub_category,amount,account,description,created_at
 234,2026-05-06,Eating in,Glovo,53.5,,,2026-05-06T20:25:36
 236,2025-12-02,Subscriptions,,49.9,auto,Amazon Prime,2026-05-08T13:09:39
 237,2026-05-08,Claudia,,34.64,,Smash Burger,
+238,2026-05-09,Coffe,,11.7,,,2026-05-11T19:56:32
+239,2026-05-09,Family,Amazon,19.99,,,2026-05-11T19:56:53
