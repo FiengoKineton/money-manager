@@ -242,3 +242,6 @@ id,date,category,sub_category,amount,account,description,created_at
 244,2026-05-15,Credit Card,,200.0,credit,Credit card payment (2026-05-15),2026-05-15T12:04:06
 245,2026-05-14,Eating out,,77.4,,,2026-05-15T12:05:49
 246,2026-05-13,Other,,61.5,,,2026-05-15T12:06:30
+247,2026-05-15,Claudia,Glovo,54.52,,,2026-05-18T17:04:41
+248,2026-05-17,Other,,14.8,,,2026-05-18T17:05:05
+249,2026-05-18,Coffe,,2.5,,,2026-05-18T17:05:27
